@@ -1,0 +1,8 @@
+/public/*.js
+/public/*.js.map
+.env
+._*
+.~lock.*
+.idea
+/node_modules
+yarn-error.log
