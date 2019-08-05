@@ -11,8 +11,8 @@
   "homepage": "",
   "scripts": {
     "watch": "webpack  --progress --colors --watch --env.develop",
-    "build": "webpack  --progress --colors --env.develop",
-    "prod": "webpack"
+    "compile": "webpack  --progress --colors --env.develop",
+    "build": "webpack"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
