@@ -1,11 +1,13 @@
 import { Record, define } from 'type-r'
 import React              from 'react-mvx';
+import { NeuralModel }    from './Neural';
 
 const WHEEL_STEP = 6;
 const SPEED_STEP = .5;
 const MAX_SPEED  = 15;
 
-const SONAR_ANGLES = [ -80, -30, 0, 30, 80 ];
+const SONAR_ANGLES    = [ -80, -30, 0, 30, 80 ];
+const SONAR_MAX_RANGE = 150;
 
 @define
 export class CarModel extends Record {
@@ -20,7 +22,8 @@ export class CarModel extends Record {
         is_picked    : false,
         color        : '',
         sonar        : [],
-        sonar_points : []
+        sonar_points : [],
+        brain        : NeuralModel
     };
 
     toRight() {
@@ -89,7 +92,7 @@ export class CarModel extends Record {
                   transform={
                       'rotate(' + this.direction + ' ' + this.x + ' ' + this.y
                       + ') translate(' + this.x + ' ' + this.y + ')' }/>
-            { _.map( this.sonar_points, (p, i) =>
+            { _.map( this.sonar_points, ( p, i ) =>
                 <path key={ i }
                       d={ 'M ' + this.x + ' ' + this.y + ' L ' + p[ 0 ] + ' ' + p[ 1 ] }
                       stroke={ this.is_crashed ? 'none' : 'green' }
@@ -130,5 +133,26 @@ export class CarModel extends Record {
         if( !track.is_road( this.x, this.y ) ) {
             this.crash();
         }
+    }
+
+    init_brain() {
+        this.brain.create( [ 7, 11, 2 ] );
+        this.brain.seed( null, 1 );
+    }
+
+    do_think() {
+
+        const vector = _.map( this.sonar, s => Math.min( SONAR_MAX_RANGE, s ) / SONAR_MAX_RANGE );
+        vector.push( (this.wheel + 1) / 2 );
+        vector.push( this.speed / MAX_SPEED );
+
+        this.brain.input( vector );
+
+        const res = this.brain.calculate();
+
+        console.log( res );
+
+        this.speed = res[ 0 ] * MAX_SPEED;
+        this.wheel = res[ 1 ] * 2 - 1;
     }
 }

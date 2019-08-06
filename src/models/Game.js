@@ -17,15 +17,21 @@ export class GameModel extends Record {
     cycle = () => {
         this.ticker++;
         this.cars.each( car => {
-            if (!car.is_crashed) {
+            if( !car.is_crashed ) {
+                car.sonar_scan( this.track );
+                car.do_think();
                 car.move();
-                car.sonar_scan(this.track);
                 car.checkRoad( this.track );
             }
         } );
     };
 
     initialize() {
-        this.cars.push( new CarModel( { x : 350, y : 320, direction : 0, label:'Red01' } ) );
+        this.cars.push( new CarModel() );
+    }
+
+    init() {
+        this.car.set( { x : 350, y : 320, direction : 0, speed : 0, wheel : 0, label : 'Red01', is_crashed : false } );
+        this.car.init_brain();
     }
 }

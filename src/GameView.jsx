@@ -36,6 +36,7 @@ export class GameView extends React.Component {
         $( window ).on( 'keyup', this.onKeyUp );
 
         this.state.game.track.attachTo( this.refs.canvas ).then(()=>{
+            this.state.game.init();
             this.interval = setInterval( this.state.game.cycle, 50 );
         });
 
@@ -85,8 +86,8 @@ export class GameView extends React.Component {
     };
 
     onAction = ()=>{
-        this.state.game.car.sonar_scan(this.state.game.track);
-    }
+        this.state.game.init();
+    };
 
     render() {
         const { game } = this.state,
