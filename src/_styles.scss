@@ -1,23 +1,33 @@
+.af {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.controller {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height:50px;
+  background-color: maroon;
+}
+
+.car_report {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding:20px;
+}
+
+
 .top-right {
   position: absolute;
   top: 0;
   right: 0;
   display: flex;
   align-items: center;
-}
-
-.up_time {
-  padding: 0 1em;
-  font-size: x-small;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  transform-origin: bottom right;
-  transform: rotate(-90deg);
-}
-
-.chart_options {
-  display: flex;
 }
 
 .z_option {
@@ -50,23 +60,22 @@ $loader_sy: 150px;
   position: fixed;
   height: 100%;
   width: 100%;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   z-index: 10000;
   overflow: hidden;
   transition: background-color 2s;
   background-color: transparentize(#fff, .3);
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
-
 
 .loaderInline {
   position: relative;
   width: 100%;
   z-index: 10000;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -77,18 +86,18 @@ $loader_sy: 150px;
 }
 
 .loaderBody {
-  color:darkred;
+  color: darkred;
   text-align: center;
   font-weight: 500;
   font-size: 1.4rem;
 }
 
 .loaderImg {
-  display:block;
+  display: block;
   width: $loader_sx;
   height: $loader_sy;
   transform-origin: center center;
-  margin:0 auto;
+  margin: 0 auto;
 }
 
 .loaderInline .loaderImg {
