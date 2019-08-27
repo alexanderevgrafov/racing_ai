@@ -1,13 +1,14 @@
 import { Record, define } from 'type-r'
 import React              from 'react-mvx';
 import { NeuralModel }    from './Neural';
+import cx                 from 'classnames'
 
-const WHEEL_STEP = 6;
+const WHEEL_STEP = 7;
 const SPEED_STEP = .5;
 const MAX_SPEED  = 15;
 
-const SONAR_ANGLES    = [ -80, -30, 0, 30, 80 ];
-const SONAR_MAX_RANGE = 150;
+const SONAR_ANGLES    = [ -60, -30, 0, 30, 60 ];
+const SONAR_MAX_RANGE = 450;
 
 @define
 export class CarModel extends Record {
@@ -20,6 +21,7 @@ export class CarModel extends Record {
         y            : 0,
         is_crashed   : false,
         is_picked    : false,
+        is_selected  : false,
         color        : '',
         sonar        : [],
         sonar_points : [],
@@ -84,31 +86,37 @@ export class CarModel extends Record {
         this.speed = Math.max( this.speed, 0 );
     }
 
+    onClick = e => {
+        this.is_picked = !this.is_picked;
+    };
+
     draw() {
-        return <g>
+        const { is_crashed, is_picked, is_selected } = this;
+        return <g className={ cx( 'car', { is_crashed, is_picked, is_selected } ) } key={ this.cid }>
             <path d='M 0 0 L 10 0 L -10 5 L -10 -5 L 10 0 z'
-                  stroke={ this.is_crashed ? 'navy' : 'red' }
-                  fill='none'
-                  transform={
-                      'rotate(' + this.direction + ' ' + this.x + ' ' + this.y
-                      + ') translate(' + this.x + ' ' + this.y + ')' }/>
-            { _.map( this.sonar_points, ( p, i ) =>
+                  className='trunk'
+                  transform={ 'rotate(' + this.direction + ' ' + this.x + ' ' + this.y
+                              + ') translate(' + this.x + ' ' + this.y + ')' }
+                  onClick={ this.onClick }
+            />
+            { is_picked && _.map( this.sonar_points, ( p, i ) =>
                 <path key={ i }
                       d={ 'M ' + this.x + ' ' + this.y + ' L ' + p[ 0 ] + ' ' + p[ 1 ] }
-                      stroke={ this.is_crashed ? 'none' : 'green' }
-                      fill='none'
+                      className='sonar_line'
                 /> ) }
         </g>
 
     }
 
     move() {
-        this.direction += this.wheel * WHEEL_STEP;
+
+        this.direction += this.wheel * WHEEL_STEP * Math.sqrt( 1 - this.speed / MAX_SPEED );
         //   this.wheel = 0;
 
         const rad = this.direction * 2 * Math.PI / 360;
         this.y += Math.sin( rad ) * this.speed;
         this.x += Math.cos( rad ) * this.speed;
+
     }
 
     sonar_scan( track ) {
@@ -135,14 +143,19 @@ export class CarModel extends Record {
         }
     }
 
-    init_brain() {
+    init_brain( base_brain ) {
         this.brain.create( [ 7, 11, 2 ] );
-        this.brain.seed( null, 1 );
+        if( base_brain ) {
+            this.brain.seed( base_brain, game_config.mutation_variation / 100 );
+        } else {
+            this.brain.seed( null, 1 );
+        }
     }
 
     do_think() {
 
         const vector = _.map( this.sonar, s => Math.min( SONAR_MAX_RANGE, s ) / SONAR_MAX_RANGE );
+
         vector.push( (this.wheel + 1) / 2 );
         vector.push( this.speed / MAX_SPEED );
 
@@ -150,9 +163,8 @@ export class CarModel extends Record {
 
         const res = this.brain.calculate();
 
-        console.log( res );
-
         this.speed = res[ 0 ] * MAX_SPEED;
         this.wheel = res[ 1 ] * 2 - 1;
+
     }
 }

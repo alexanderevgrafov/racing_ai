@@ -1,37 +1,61 @@
 import { Record, define, type } from 'type-r'
 import { TrackModel }           from './Track';
 import { CarModel }             from './Car';
+import { NeuralModel }          from './Neural';
+import { ConfigModel }          from './config';
+
+const CARS_PER_GENERATION = 20,
+      STARTING_RADIUS     = 20;
 
 @define
 export class GameModel extends Record {
     static attributes = {
-        track  : TrackModel,
-        cars   : CarModel.Collection,
-        ticker : 0
+        track     : TrackModel,
+        config    : ConfigModel,
+        cars      : CarModel.Collection,
+        avg_brain : type( NeuralModel ).value( null ), // null is significant for initial start
+        paused    : false,
+        ticker    : 0
     };
-
-    get car() {
-        return this.cars.at( 0 );
-    }
 
     cycle = () => {
         this.ticker++;
-        this.cars.each( car => {
-            if( !car.is_crashed ) {
-                car.sonar_scan( this.track );
-                car.do_think();
-                car.move();
-                car.checkRoad( this.track );
-            }
+        this.transaction( () => {
+
+            this.cars.each( car => {
+                if( !car.is_crashed ) {
+                    car.sonar_scan( this.track );
+                    car.do_think();
+                    car.move();
+                    car.checkRoad( this.track );
+                }
+            } );
         } );
     };
 
-    initialize() {
-        this.cars.push( new CarModel() );
-    }
+    init( brain = null ) {
+        if( brain ) {
+            try {
+                this.avg_brain = new NeuralModel( JSON.parse( brain ) );
+            }
+            catch( e ) {
+                console.log( 'Bad model loaded from LS' )
+            }
+        }
 
-    init() {
-        this.car.set( { x : 350, y : 320, direction : 0, speed : 0, wheel : 0, label : 'Red01', is_crashed : false } );
-        this.car.init_brain();
+        this.cars.reset();
+
+        for( let i = 0; i < CARS_PER_GENERATION; i++ ) {
+            const car = new CarModel(
+                {
+                    x          : this.track.sx - STARTING_RADIUS / 2 + Math.random() * STARTING_RADIUS,
+                    y          : this.track.sy - STARTING_RADIUS / 2 + Math.random() * STARTING_RADIUS,
+                    direction  : this.track.sd,
+                    label      : 'Red_' + i
+                } );
+
+            car.init_brain( this.avg_brain );
+            this.cars.add( car );
+        }
     }
 }
