@@ -7,8 +7,8 @@ const WHEEL_STEP = 7;
 const SPEED_STEP = .5;
 const MAX_SPEED  = 15;
 
-const SONAR_ANGLES    = [ -60, -30, 0, 30, 60 ];
-const SONAR_MAX_RANGE = 450;
+const SONAR_ANGLES    = [ -80, -30, 0, 30, 80 ];
+const SONAR_MAX_RANGE = 550;
 
 @define
 export class CarModel extends Record {

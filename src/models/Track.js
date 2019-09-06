@@ -9,7 +9,8 @@ export class TrackModel extends Record {
         sx       : 0,
         sy       : 0,
         sd       : 0,
-        ctx      : type( Object ).value( null ).has.toJSON( false )
+        ctx      : type( Object ).value( null ).has.toJSON( false ),
+        pixels   : type( Uint8ClampedArray ).value( null ).has.toJSON( false )
     };
 
     attachTo( canvas ) {
@@ -27,6 +28,8 @@ export class TrackModel extends Record {
             }, false );
 
             img.src = this.filename;
+        } ).then( () => {
+            this.pixels = this.ctx.getImageData( 0, 0, this.width, this.height ).data
         } );
     }
 
@@ -64,8 +67,8 @@ export class TrackModel extends Record {
     */
 
     is_road( x, y ) {
-        const d = this.ctx.getImageData( x, y, 1, 1 ).data;
+        const d = (Math.round(y) * this.width  + Math.round(x)) * 4;
 
-        return d[ 0 ] + d[ 1 ] + d[ 2 ] > 200;
+        return this.pixels[ d ] + this.pixels[ d + 1 ] + this.pixels[ d + 2 ] > 200;
     }
 }

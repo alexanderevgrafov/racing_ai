@@ -14,7 +14,7 @@ export const Tracks_options = {
     '#3':{
         filename : 'tracks/003.png',
         sx: 250,
-        sy: 60
+        sy: 40
     },
     '#1-back':{
         filename : 'tracks/001.png',
@@ -31,7 +31,7 @@ export const Tracks_options = {
     '#3-back':{
         filename : 'tracks/003.png',
         sx: 250,
-        sy: 60,
+        sy: 40,
         sd:180
     }
 };

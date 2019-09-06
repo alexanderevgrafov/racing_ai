@@ -72,7 +72,7 @@ export class GameView extends React.Component {
         game.track = new TrackModel( Tracks_options[ game.config.track_name ] );
 
         return game.track.attachTo( this.refs.canvas ).then( () => {
-                game.init( localStorage.getItem( 'best_brain' ) );
+                game.init( localStorage.getItem( 'best_brain2' ) );
                 this.doPause( false )
             }
         )
@@ -89,7 +89,7 @@ export class GameView extends React.Component {
 
             game.avg_brain.setAverage( _.map( picked, x => x.brain ) );
 
-            localStorage.setItem( 'best_brain', JSON.stringify( game.avg_brain.toJSON() ) );
+            localStorage.setItem( 'best_brain2', JSON.stringify( game.avg_brain.toJSON() ) );
         }
 
         game.init();
