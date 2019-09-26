@@ -7,11 +7,13 @@
  
 ## A bit of explanation
 The idea was to create autopilot neural network which drives cars on random drawn track.
-So you have N(==20) cars on the track - each car have own "brain" which drives it up to crash into track edge.
-You can select cars and restart the race with new cars, with brains initiated with average data of previously selected ones, + some randomness.
-So, selecting most successful cars you can easly (in dozen of generations) train your cars to navigate through the track. 
+So you have N(==20) cars on the track - each car have own "brain" which drives it.
+You can pick one (or more) cars to restart process, with new cars generation created with NN weights as average of previously picked ones, + some randomness.
+So, picking most successful cars you can train your model to navigate through the track (no more than 10 mins of pick-and-restart cycles).
 
-Track is just black-and-white PNG with starting point and initial direction. (see /src/config.js) 
+**This is fun!** 
+
+Track is just black-and-white PNG with starting (x,y) point and initial (degree) direction. (see /src/config.js) 
  
 Car model is pretty basic - just wheel angle & throttle/break  parameters which used to calculate next position.
 
@@ -36,7 +38,7 @@ Neural Network has 7+11+2 nodes
 
 Throttle is to increase-decrease speed, wheel direction is to change direction of a car, obviously.
 
-##How to train your model
+## How to train your model
 
 On very beginning your model is totally random, so vehicles goes fast and never try to turn. 
 
