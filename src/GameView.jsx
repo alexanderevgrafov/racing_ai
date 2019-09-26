@@ -143,27 +143,49 @@ export class GameView extends React.Component {
                             { JSON.stringify( car.brain.toJSON() ) }
                         </div> )
                 }
-*/ }
+
                 { game.avg_brain &&
                   <div className='brain'>
                       <h4>Average Brain</h4>
                       { JSON.stringify( game.avg_brain.toJSON() ) }
                   </div>
                 }
-
+*/ }
             </div>
-            <button onClick={ this.onAction }>Restart with picked</button>
-            <button onClick={ this.onBrainReset }>Reset game results</button>
-            <button onClick={ () => this.doPause() }>{ game.paused ? 'Resume' : 'Pause' }</button>
-            <Form.ControlLinked valueLink={ game_config.linkAt( 'freaks_possibility' ) }/>
-            <Form.ControlLinked valueLink={ game_config.linkAt( 'mutation_variation' ) }/>
-            <ToggleButtonGroupLinked type='radio' valueLink={ game_config.linkAt( 'track_name' ) } name='track_name'>
-                {
-                    _.map( _.keys( Tracks_options ),
-                        name => <ToggleButton value={ name } key={ name }>{ name }</ToggleButton> )
-                }
-            </ToggleButtonGroupLinked>
-
+            <p>Pick most successful cars and restart
+                <button onClick={ this.onAction }>Restart based on picked</button>
+            </p>
+            <p>Pause makes easier to pick quick cars!
+                <button onClick={ () => this.doPause() }>{ game.paused ? 'Resume' : 'Pause' }</button>
+            </p>
+            <p>Percent of "freaks" - totally randomised weights. Suggested up to 25 on start and lower it down
+                while fine-tuning your model
+                <Form.ControlLinked valueLink={ game_config.linkAt( 'freaks_possibility' ) }/>
+            </p>
+            <p>Variation percent for all weights - to let next generation differ from base model. Suggested
+                around 25 on start and get it lower if you feel your models params need to vary less.
+                <Form.ControlLinked valueLink={ game_config.linkAt( 'mutation_variation' ) }/>
+            </p>
+            <p>Reset from scratch
+                <button onClick={ () => {
+                    if( confirm( 'Are you ok to reset? All training will be lost!' ) ) {
+                        this.onBrainReset()
+                    }
+                } }>Reset game results
+                </button>
+            </p>
+            <p>Select different tracks to try your model on. You can add own track in config.js file
+                (project rebuild needed)
+                <ToggleButtonGroupLinked
+                    type='radio'
+                    valueLink={ game_config.linkAt( 'track_name' ) }
+                    name='track_name'>
+                    {
+                        _.map( _.keys( Tracks_options ),
+                            name => <ToggleButton value={ name } key={ name }>{ name }</ToggleButton> )
+                    }
+                </ToggleButtonGroupLinked>
+            </p>
         </div>
     }
 }
