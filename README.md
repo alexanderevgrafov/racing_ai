@@ -1,6 +1,6 @@
 # Racing AI. Machine learning sandbox
 
-##About
+## About
  This is very basic demonstration of machine learning on React - no any ML library is used.
  
  Yet to be commented for public.  
